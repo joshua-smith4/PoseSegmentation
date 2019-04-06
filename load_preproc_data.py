@@ -33,6 +33,7 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
         for i in range(x.shape[1]):
             for j in range(x.shape[0]):
                 yield paddedX[i:i+wy,j:j+wx], y[i,j]
+                print(i,j)
 
 # if __name__ == '__main__':
     # for x,y in load_preproc_generator("/home/jsmith/ubc3v_preproc", training_data=True):
