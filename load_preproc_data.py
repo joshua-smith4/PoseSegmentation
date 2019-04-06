@@ -30,8 +30,8 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
     assert (wx % 2 != 0 and wy % 2 != 0), "width and height of sliding window must be odd integers"
     for x,y in g:
         paddedX = np.pad(x, [(wy//2,), (wx//2,)], pad, **padArgs)
-        for i in x.shape[1]:
-            for j in x.shape[0]:
+        for i in range(x.shape[1]):
+            for j in range(x.shape[0]):
                 yield paddedX[i:i+wy,j:j+wx], y[i,j]
 
 # if __name__ == '__main__':
