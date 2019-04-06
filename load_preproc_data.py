@@ -36,6 +36,7 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
                 window = paddedX[i:i+wy,j:j+wx]
                 if np.all(window == 0) and y[i,j] == 0 and counter < 10:
                     counter += 1
+                    print(i,j, 'skipped')
                     continue
                 counter = 0
                 yield window, y[i,j]
