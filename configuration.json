@@ -1,0 +1,6 @@
+{
+  "path_to_ubc3v": "/home/jsmith/ubc3v_preproc",
+  "number_of_trees": 13,
+  "window_size_x": 100,
+  "window_size_y": 100
+}
