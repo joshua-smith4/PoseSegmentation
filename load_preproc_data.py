@@ -35,3 +35,6 @@ def load_preproc_data_fcn(fp, train_split=0.8, max_files=100):
 
 def load_preproc_data_rf(fp, wx, wy, pad="edge"):
     pass
+
+if __name__ == '__main__':
+    x_train, y_train, x_test, y_test = load_preproc_data_fcn("/home/jsmith/ubc3v_preproc")
