@@ -8,7 +8,6 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
     random_state = 0
     counter = 0
     for f in files:
-        print(counter)
         if counter >= max_files:
             return
         counter += 1
@@ -26,7 +25,7 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
                 yield x[i], y[i]
 
 
-def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs=None, train_split=0.8, max_files=100, training_data=True):
+def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_split=0.8, max_files=100, training_data=True):
     g = load_preproc_generator(fp, train_split=train_split, max_files=max_files, training_data=training_data)
     assert (wx % 2 != 0 and wy % 2 != 0), "width and height of sliding window must be odd integers"
     for x,y in g:
