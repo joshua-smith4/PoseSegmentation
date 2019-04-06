@@ -44,5 +44,5 @@ def load_preproc_data_rf(fp, wx, wy, pad="edge"):
     pass
 
 if __name__ == '__main__':
-    x_train, y_train = load_preproc_data_fcn("/home/jsmith/ubc3v_preproc", max_files=70)
+    x_train, y_train = load_preproc_data_fcn("/home/jsmith/ubc3v_preproc", max_files=60)
     print(x_train.shape, y_train.shape)
