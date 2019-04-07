@@ -1,8 +1,9 @@
 {
   "path_to_ubc3v": "/home/jsmith/ubc3v_preproc",
   "max_nodes": 7500,
-  "number_of_trees": 13,
+  "number_of_trees": 50,
   "window_size_x": 100,
   "window_size_y": 100,
-  "batch_size": 35
+  "batch_size": 35,
+  "rf_model_dir": "/home/jsmith/PoseSegmentation/rf_model"
 }
