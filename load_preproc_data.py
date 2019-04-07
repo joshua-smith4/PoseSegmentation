@@ -9,7 +9,6 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
     files.sort()
     random_state = 0
     counter = 0
-    print('entered generator')
     for f in files:
         if counter >= max_files:
             return
@@ -23,6 +22,7 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
         if training_data:
             for i in range(train_divide):
                 yield x[i], y[i]
+                print('entered generator')
         else:
             for i in range(train_divide, x.shape[0]):
                 yield x[i], y[i]
