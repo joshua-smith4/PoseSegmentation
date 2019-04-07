@@ -46,6 +46,6 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
 
 tf.reset_default_graph()
 sess = tf.Session()
-dataset = Dataset.from_generator(load_preproc_generator, (tf.float16, tf.uint8), (tf.TensorShape([424,512]), tf.TensorShape([424,512])), args=(tf.constant('/home/jsmith/ubc3v_preproc'),))
+dataset = Dataset.from_generator(load_preproc_generator, (tf.float16, tf.uint8), (tf.TensorShape([424,512]), tf.TensorShape([424,512])), args=(tf.constant(u'/home/jsmith/ubc3v_preproc'),))
 iterator = dataset.make_one_shot_iterator()
 x_train, y_train = iterator.get_next()
