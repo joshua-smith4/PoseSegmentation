@@ -44,7 +44,7 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
                 yield window, y[i,j]
                 print(i,j)
 
-dataset = Dataset(load_preproc_generator, (tf.float16, tf.uint8), args=('/home/jsmith/ubc3v_preproc'))
+dataset = Dataset.from_generator(load_preproc_generator, (tf.float16, tf.uint8), args=('/home/jsmith/ubc3v_preproc'))
 # if __name__ == '__main__':
     # for x,y in load_preproc_generator("/home/jsmith/ubc3v_preproc", training_data=True):
     #     print(x.shape, y.shape)
