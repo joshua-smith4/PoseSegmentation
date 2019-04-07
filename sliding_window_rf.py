@@ -24,7 +24,7 @@ def train_estimator(config):
     estimator = build_estimator(config)
     dataset = make_rf_dataset(config)
     dataset.batch(config['batch_size'])
-    iterator = dataset.make_initializable_iterator()
+    iterator = dataset.make_one_shot_iterator()
     x_train, y_train = iterator.get_next()
     def input_fn():
         return x_train, y_train
