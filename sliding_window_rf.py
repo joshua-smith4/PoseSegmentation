@@ -6,7 +6,7 @@ from tensorflow.contrib.learn import Estimator
 import json
 from tensorflow.data import Dataset
 from load_preproc_data import load_preproc_generator_windowed
-
+tf.enable_eager_execution()
 
 def make_rf_dataset(config):
     return Dataset.from_generator(load_preproc_generator_windowed, (tf.float16, tf.uint8), (
