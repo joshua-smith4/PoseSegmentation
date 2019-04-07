@@ -5,7 +5,7 @@ from tensorflow.contrib.tensor_forest.client import eval_metrics
 from tensorflow.contrib.learn import Estimator
 import json
 from tensorflow.data import Dataset
-from load_preproc_generator import load_preproc_generator_windowed
+from load_preproc_data import load_preproc_generator_windowed
 
 
 def make_rf_dataset(config):
