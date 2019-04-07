@@ -5,7 +5,10 @@ import tensorflow as tf
 from tensorflow.data import Dataset
 
 def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=True):
-    files = [f for f in os.listdir(fp) if f.decode().endswith('.npz')]
+    if type(fp) == bytes:
+        files = [f for f in os.listdir(fp) if f.endswith(b'.npz')]
+    else:
+        files = [f for f in os.listdir(fp) if f.endswith('.npz')]
     files.sort()
     random_state = 0
     counter = 0
