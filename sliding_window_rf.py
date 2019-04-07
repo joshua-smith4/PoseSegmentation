@@ -27,7 +27,7 @@ def train_estimator(config):
     iterator = dataset.make_one_shot_iterator()
     x_train, y_train = iterator.get_next()
     def input_fn():
-        return x_train, y_train
+        return {"depth":x_train}, y_train
     estimator.fit(input_fn=input_fn)
     return estimator
 
