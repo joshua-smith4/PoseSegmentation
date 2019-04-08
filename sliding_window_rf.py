@@ -9,7 +9,7 @@ from load_preproc_data import load_preproc_generator_windowed
 tf.enable_eager_execution()
 
 def make_rf_dataset(config):
-    return Dataset.from_generator(load_preproc_generator_windowed, (tf.float16, tf.uint8), (
+    return Dataset.from_generator(load_preproc_generator_windowed, (tf.float32, tf.uint32), (
         tf.TensorShape([config['window_size_y'] * config['window_size_x']]), tf.TensorShape([1])))
 
 
@@ -22,12 +22,11 @@ def build_estimator(config):
 
 def train_estimator(config):
     estimator = build_estimator(config)
-    dataset = make_rf_dataset(config)
-    dataset.batch(config['batch_size'])
-    # iterator = dataset.make_one_shot_iterator()
-    # x_train, y_train = iterator.get_next()
     def input_fn():
-        return dataset
+        dataset = make_rf_dataset(config)
+        dataset.batch(config['batch_size'])
+        iterator = dataset.make_one_shot_iterator()
+        return iterator.get_next()
     estimator.fit(input_fn=input_fn)
     return estimator
 
