@@ -15,7 +15,7 @@ def make_rf_dataset(config):
     g = load_preproc_generator_windowed(config['path_to_ubc3v'], config['window_size_x'], config['window_size_y'])
     def cast_to_tf_gen():
         for x,y in g:
-            yield tf.cast(x,tf.float32), tf.cast(y,tf.int32)
+            yield tf.convert_to_tensor(x,dtype=tf.float32,name="input_x"), tf.convert_to_tensor(y,dtype=tf.int32,name="input_y")
     return Dataset.from_generator(cast_to_tf_gen, (tf.float32, tf.int32))
 
 
