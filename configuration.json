@@ -1,7 +1,7 @@
 {
   "path_to_ubc3v": "/home/jsmith/ubc3v_preproc",
   "max_nodes": 7500,
-  "number_of_trees": 50,
+  "number_of_trees": 100,
   "window_size_x": 101,
   "window_size_y": 101,
   "batch_size": 35,
