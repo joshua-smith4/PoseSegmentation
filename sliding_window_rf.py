@@ -4,6 +4,7 @@ from tensorflow.contrib.tensor_forest.client import random_forest
 from tensorflow.contrib.tensor_forest.client import eval_metrics
 from tensorflow.contrib.learn import Estimator
 import json
+import numpy as np
 from tensorflow.data import Dataset
 from load_preproc_data import load_preproc_generator_windowed
 from tensorflow.keras.utils import to_categorical
@@ -15,8 +16,7 @@ def make_rf_dataset(config):
     def cast_to_tf_gen():
         for x,y in g:
             yield tf.cast(x,tf.float32), tf.cast(y,tf.int32)
-    return Dataset.from_generator(cast_to_tf_gen, (tf.float32, tf.int32), (
-        tf.TensorShape([config['batch_size'],config['window_size_y'] * config['window_size_x']]), tf.TensorShape([config['batch_size'],1])))
+    return Dataset.from_generator(cast_to_tf_gen, (tf.float32, tf.int32))
 
 
 def build_estimator(config):
@@ -31,7 +31,7 @@ def train_estimator(config):
 
     def input_fn():
         dataset = make_rf_dataset(config)
-        dataset.batch(config['batch_size'])
+        # dataset.batch(config['batch_size'])
         iterator = dataset.make_one_shot_iterator()
         return iterator.get_next()
     estimator.fit(input_fn=input_fn)
