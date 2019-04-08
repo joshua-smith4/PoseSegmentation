@@ -8,9 +8,11 @@ from tensorflow.data import Dataset
 from load_preproc_data import load_preproc_generator_windowed
 # tf.enable_eager_execution()
 
+
 def make_rf_dataset(config):
     return Dataset.from_generator(load_preproc_generator_windowed, (tf.float32, tf.uint32), (
-        tf.TensorShape([config['window_size_y'] * config['window_size_x']]), tf.TensorShape([1])))
+        tf.TensorShape([config['window_size_y'] * config['window_size_x']]), tf.TensorShape([1])),
+        args=(config['path_to_ubc3v'], config['window_size_x'], config['window_size_y']))
 
 
 def build_estimator(config):
@@ -22,6 +24,7 @@ def build_estimator(config):
 
 def train_estimator(config):
     estimator = build_estimator(config)
+
     def input_fn():
         dataset = make_rf_dataset(config)
         dataset.batch(config['batch_size'])
@@ -30,6 +33,7 @@ def train_estimator(config):
     estimator.fit(input_fn=input_fn)
     return estimator
 
+
 with open('configuration.json') as f:
     config = json.load(f)
 # trained_estimator = train_estimator(config)
@@ -37,7 +41,7 @@ with open('configuration.json') as f:
 dataset = make_rf_dataset(config)
 dataset.batch(config['batch_size'])
 iterator = dataset.make_one_shot_iterator()
-x,y = iterator.get_next()
+x, y = iterator.get_next()
 sess = tf.Session()
-x_f,y_f = sess.run((x,y))
+x_f, y_f = sess.run((x, y))
 print(x_f.shape, y_f.shape)
