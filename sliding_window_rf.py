@@ -14,7 +14,8 @@ def make_rf_dataset(config):
     def cast_to_tf_gen():
         for x,y in g:
             yield tf.cast(x,tf.float32), tf.cast(y,tf.int32)
-    return Dataset.from_generator(cast_to_tf_gen, (tf.float32, tf.int32))
+    return Dataset.from_generator(cast_to_tf_gen, (tf.float32, tf.int32), (
+        tf.TensorShape([config['window_size_y'] * config['window_size_x']]), tf.TensorShape([])))
 
 
 def build_estimator(config):
