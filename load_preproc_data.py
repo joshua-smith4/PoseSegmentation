@@ -44,8 +44,7 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
                     counter += 1
                     continue
                 counter = 0
-                yield (dict({'image':tf.cast(window.flatten().astype(np.float32), tf.float32)}), tf.cast(y[i,j].astype(np.uint32),tf.uint32))
-                print(i,j)
+                yield window.flatten(), y[i,j]
 
 # tf.reset_default_graph()
 # sess = tf.Session()
