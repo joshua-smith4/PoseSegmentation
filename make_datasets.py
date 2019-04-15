@@ -27,7 +27,9 @@ def make_cnn_dataset(config, training=True):
         max_files=config['max_data_files'],
         training_data=training,
     )
-    d = Dataset.from_generator(g, (tf.float32, tf.float32))
+    def dummy():
+        return g
+    d = Dataset.from_generator(dummy, (tf.float32, tf.float32))
     d = d.batch(config['batch_size'])
     return d
 

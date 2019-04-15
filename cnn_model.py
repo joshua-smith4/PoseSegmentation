@@ -42,4 +42,7 @@ def cnn_model_fn(features, labels, mode):
         strides=2)
 
     dropout = tf.layers.dropout(
-        inputs=pool3, rate=0.4, training=mode == tf.estimator.ModeKeys.TRAIN)
+        inputs=pool3,
+        rate=0.4,
+        training=mode == tf.estimator.ModeKeys.TRAIN)
+    
