@@ -90,15 +90,7 @@ def cnn_model_fn(features, labels, mode):
     logits_scaled = (logits - min_logits)/(max_logits - min_logits)*45
 
     classes = tf.round(logits_scaled)
-    flat_shape = [-1,424*512]
-    flat_logits = tf.reshape(logits_scaled, flat_shape)
-    flat_labels = tf.reshape(labels, flat_shape)
-
-    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
-        labels=flat_labels,
-        logits=flat_logits,
-    )
-    loss = tf.reduce_sum(cross_entropy)
+    loss = tf.reduce_sum(tf.square(labels - logits_scaled))
     return {
         'probability': logits_scaled,
         'classes': classes,
