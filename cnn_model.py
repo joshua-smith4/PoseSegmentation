@@ -67,7 +67,7 @@ def cnn_model_fn(features, labels, training=True):
 
     upsamp1 = tf.tile(
         input=dropout,
-        multiples=[1,2,2,1],
+        multiples=[1, 2, 2, 1],
         name='upsamp1'
     )
     # 106 128 64
@@ -81,7 +81,7 @@ def cnn_model_fn(features, labels, training=True):
 
     upsamp2 = tf.tile(
         input=deconv3,
-        multiples=[1,2,2,1],
+        multiples=[1, 2, 2, 1],
         name='upsamp2'
     )
     # 212 256 128
@@ -94,7 +94,7 @@ def cnn_model_fn(features, labels, training=True):
 
     upsamp3 = tf.tile(
         input=deconv2,
-        multiples=[1,2,2,1],
+        multiples=[1, 2, 2, 1],
         name='upsamp3'
     )
 
@@ -117,7 +117,7 @@ def cnn_model_fn(features, labels, training=True):
     optimizer = tf.train.AdamOptimizer()
     train_op = optimizer.minimize(loss=loss)
     accuracy = tf.reduce_sum(
-        tf.cast(tf.equal(classes, labels), tf.float32)) / (424 * 512)
+        tf.cast(tf.equal(tf.reshape(classes, [-1, 424, 512]), labels), tf.float32)) / (424 * 512)
     return {
         'probability': logits_scaled,
         'classes': classes,
@@ -175,7 +175,7 @@ if __name__ == '__main__':
                     print('looped {} times through testing loop'.format(count))
                     break
             acc_avg = acc_total / count
-            print('Accuracy on test data: {} {}/{}'.format(acc_avg,acc_total,count))
+            print('Accuracy on test data: {} {}/{}'.format(acc_avg, acc_total, count))
             if acc_avg > acc_max:
                 acc_max = acc_avg
                 print('Saving epoch {}'.format(i))
