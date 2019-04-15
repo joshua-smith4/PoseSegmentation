@@ -128,14 +128,13 @@ def cnn_model_fn(features, labels, training=True):
 
 
 if __name__ == '__main__':
-    import make_datasets as datasets
+    from load_preproc_data import load_preproc_generator
     import json
+    import numpy as np
 
     with open('configuration.json') as f:
         config = json.load(f)
 
-    dataset_train = datasets.make_cnn_dataset(config, training=True)
-    dataset_test = datasets.make_cnn_dataset(config, training=False)
 
     x = tf.placeholder(tf.float32, [None, 424, 512])
     y = tf.placeholder(tf.float32, [None, 424, 512])
@@ -146,34 +145,49 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         for i in range(config['num_epochs']):
             print('Current Epoch: {}'.format(i))
-            train_iterator = dataset_train.make_one_shot_iterator()
-            test_iterator = dataset_test.make_one_shot_iterator()
-            x_train, y_train = train_iterator.get_next()
-            x_test, y_test = test_iterator.get_next()
             # training loop
+            gen_train = load_preproc_generator(
+                config['path_to_ubc3v'],
+                config['train_split'],
+                config['max_data_files'],
+                training_data=True
+            )
+            gen_test = load_preproc_generator(
+                config['path_to_ubc3v'],
+                config['train_split'],
+                config['max_data_files'],
+                training_data=False
+            )
             count = 0
             while True:
                 print('Training Loop Notifier')
                 try:
-                    x_batch, y_batch = sess.run((x_train, y_train))
+                    x_batch = []
+                    y_batch = []
+                    for j in range(config['batch_size']):
+                        try:
+                            tmpx, tmpy = next(gen_train)
+                            x_batch += [tmpx]
+                            y_batch += [tmpy]
+                        except StopIteration:
+                            break
+                    x_batch = np.array(x_batch)
+                    y_batch = np.array(y_batch)
                     count += 1
-                    sess.run(model['train_op'], feed_dict={
-                             x: x_batch, y: y_batch})
-                except tf.errors.OutOfRangeError:
+                    if x_batch.shape[0] > 0:
+                        sess.run(model['train_op'], feed_dict={
+                            x: x_batch, y: y_batch})
+                except StopIteration:
                     print('looped {} times through training loop'.format(count))
                     break
             # eval test loop
             acc_total = 0.0
             count = 0
-            while True:
-                try:
-                    x_test_val, y_test_val = sess.run((x_test, y_test))
-                    acc_total += sess.run(model['accuracy'],
-                                          feed_dict={x: x_test_val, y: y_test_val})
-                    count += 1
-                except tf.errors.OutOfRangeError:
-                    print('looped {} times through testing loop'.format(count))
-                    break
+            for x_test,y_test in gen_test:
+                count += 1
+                acc_total += sess.run(model['accuracy'],
+                    feed_dict={x: x_test, y: y_test})
+            print('looped {} times over test data'.format(count))
             acc_avg = acc_total / count
             print('Accuracy on test data: {} {}/{}'.format(acc_avg, acc_total, count))
             if acc_avg > acc_max:
