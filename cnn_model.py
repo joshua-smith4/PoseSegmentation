@@ -140,9 +140,11 @@ if __name__ == '__main__':
     y = tf.placeholder(tf.float32, [None, 424, 512])
 
     model = cnn_model_fn(x, y, training=True)
+    init = tf.global_variables_initializer()
     saver = tf.train.Saver()
     acc_max = 0.0
     with tf.Session() as sess:
+        init.run()
         for i in range(config['num_epochs']):
             print('Current Epoch: {}'.format(i))
             # training loop
