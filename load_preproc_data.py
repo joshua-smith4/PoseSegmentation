@@ -24,11 +24,11 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
         train_divide = int(x.shape[0]*train_split)
         if training_data:
             for i in range(train_divide):
-                yield x[i], y[i]
+                yield x[i].astype(np.float32), y[i].astype(np.float32)
                 print('entered generator')
         else:
             for i in range(train_divide, x.shape[0]):
-                yield x[i], y[i]
+                yield x[i].astype(np.float32), y[i].astype(np.float32)
 
 
 def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_split=0.8, max_files=100, training_data=True):
@@ -45,9 +45,3 @@ def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_sp
                     continue
                 counter = 0
                 yield window.flatten(), y[i,j]
-
-# tf.reset_default_graph()
-# sess = tf.Session()
-# dataset = Dataset.from_generator(load_preproc_generator, (tf.float16, tf.uint8), (tf.TensorShape([424,512]), tf.TensorShape([424,512])), args=(tf.constant('/home/jsmith/ubc3v_preproc'),))
-# iterator = dataset.make_one_shot_iterator()
-# x_train, y_train = iterator.get_next()
