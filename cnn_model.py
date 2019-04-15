@@ -100,13 +100,13 @@ def cnn_model_fn(features, labels, training=True):
 
     # 424 512 64
     logits = tf.nn.conv2d_transpose(
-        value=deconv2,
+        value=upsamp3,
         filter=conv1w,
         output_shape=[-1, 424, 512, 1],
         strides=[1, 1, 1, 1],
         name='logits'
     )
-    
+
     min_logits = tf.reduce_min(logits)
     max_logits = tf.reduce_max(logits)
     logits_scaled = (logits - min_logits) / (max_logits - min_logits) * 45
