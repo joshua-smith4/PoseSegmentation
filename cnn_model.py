@@ -90,7 +90,7 @@ def cnn_model_fn(features, labels, mode):
     logits_scaled = (logits - min_logits)/(max_logits - min_logits)*45
 
     classes = tf.round(logits_scaled)
-    loss = tf.reduce_sum(tf.square(labels - logits_scaled))
+    loss = tf.reduce_sum(tf.square(labels - tf.reshape(logits_scaled,[-1,424,512])))
     return {
         'probability': logits_scaled,
         'classes': classes,
