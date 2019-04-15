@@ -39,7 +39,7 @@ def cnn_model_fn(features, labels, training=True):
         inputs=act2,
         pool_size=[2, 2],
         strides=2)
-    # 106 128 128
+
     conv3w = tf.Variable(
         tf.random.normal([30, 30, 32, 32]),
         dtype=tf.float32,
@@ -58,7 +58,7 @@ def cnn_model_fn(features, labels, training=True):
         inputs=act3,
         pool_size=[2, 2],
         strides=2)
-    # 53 64 64
+
     dropout = tf.layers.dropout(
         inputs=pool3,
         rate=0.4,
@@ -69,7 +69,7 @@ def cnn_model_fn(features, labels, training=True):
         multiples=[1, 2, 2, 1],
         name='upsamp1'
     )
-    # 106 128 64
+
     deconv3_out_shape = tf.stack([batch_size_tensor, 106, 128, 32])
     deconv3 = tf.nn.conv2d_transpose(
         value=upsamp1,
@@ -77,14 +77,13 @@ def cnn_model_fn(features, labels, training=True):
         output_shape=deconv3_out_shape,
         strides=[1, 1, 1, 1],
         name='deconv3')
-    # 106 128 128
 
     upsamp2 = tf.tile(
         input=deconv3,
         multiples=[1, 2, 2, 1],
         name='upsamp2'
     )
-    # 212 256 128
+
     deconv2_out_shape = tf.stack([batch_size_tensor, 212, 256, 32])
     deconv2 = tf.nn.conv2d_transpose(
         value=upsamp2,
@@ -99,7 +98,7 @@ def cnn_model_fn(features, labels, training=True):
         name='upsamp3'
     )
 
-    # 424 512 64
+
     logits_out_shape = tf.stack([batch_size_tensor, 424, 512, 1])
     logits = tf.nn.conv2d_transpose(
         value=upsamp3,
@@ -164,7 +163,7 @@ if __name__ == '__main__':
             )
             count = 0
             while True:
-                print('Training Loop Notifier')
+                #print('Training Loop Notifier')
                 try:
                     x_batch = []
                     y_batch = []
@@ -178,7 +177,7 @@ if __name__ == '__main__':
                     x_batch = np.array(x_batch)
                     y_batch = np.array(y_batch)
                     count += 1
-                    print('running batch {}'.format(x_batch.shape[0]))
+                    #print('running batch {}'.format(x_batch.shape[0]))
                     if x_batch.shape[0] > 0:
                         sess.run(model['train_op'], feed_dict={
                             x: x_batch, y: y_batch})
