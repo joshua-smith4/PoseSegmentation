@@ -5,7 +5,7 @@ def cnn_model_fn(features, labels, training=True):
     input_layer = tf.reshape(features, [-1, 424, 512, 1])
     batch_size_tensor = tf.shape(input_layer)[0]
     conv1w = tf.Variable(
-        tf.random.normal([40, 40, 1, 64]),
+        tf.random.normal([40, 40, 1, 32]),
         dtype=tf.float32,
     )
     conv1 = tf.nn.conv2d(
@@ -22,7 +22,7 @@ def cnn_model_fn(features, labels, training=True):
         strides=2)
     # 212 256 64
     conv2w = tf.Variable(
-        tf.random.normal([20, 20, 64, 128]),
+        tf.random.normal([20, 20, 32, 32]),
         dtype=tf.float32,
         name='conv2w',
     )
@@ -41,7 +41,7 @@ def cnn_model_fn(features, labels, training=True):
         strides=2)
     # 106 128 128
     conv3w = tf.Variable(
-        tf.random.normal([30, 30, 128, 64]),
+        tf.random.normal([30, 30, 32, 32]),
         dtype=tf.float32,
         name='conv3w',
     )
@@ -70,7 +70,7 @@ def cnn_model_fn(features, labels, training=True):
         name='upsamp1'
     )
     # 106 128 64
-    deconv3_out_shape = tf.stack([batch_size_tensor, 106, 128, 128])
+    deconv3_out_shape = tf.stack([batch_size_tensor, 106, 128, 32])
     deconv3 = tf.nn.conv2d_transpose(
         value=upsamp1,
         filter=conv3w,
@@ -85,7 +85,7 @@ def cnn_model_fn(features, labels, training=True):
         name='upsamp2'
     )
     # 212 256 128
-    deconv2_out_shape = tf.stack([batch_size_tensor, 212, 256, 64])
+    deconv2_out_shape = tf.stack([batch_size_tensor, 212, 256, 32])
     deconv2 = tf.nn.conv2d_transpose(
         value=upsamp2,
         filter=conv2w,
