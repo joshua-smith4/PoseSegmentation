@@ -32,9 +32,3 @@ def make_cnn_dataset(config, training=True):
     d = Dataset.from_generator(dummy, (tf.float32, tf.float32))
     d = d.batch(config['batch_size'])
     return d
-
-# def build_estimator(config):
-#     params = tensor_forest.ForestHParams(
-#         num_classes=46, num_features=config['window_size_y'] * config['window_size_x'],
-#         num_trees=config['number_of_trees'], max_nodes=config['max_nodes'])
-#     return random_forest.TensorForestEstimator(params, model_dir=config['rf_model_dir'])
