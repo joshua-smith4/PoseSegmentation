@@ -92,7 +92,7 @@ def cnn_model_fn(features, labels, training=True):
     classes = tf.round(logits_scaled)
     loss = tf.reduce_sum(
         tf.square(labels - tf.reshape(logits_scaled, [-1, 424, 512])))
-    optimizer = tf.AdamOptimizer()
+    optimizer = tf.train.AdamOptimizer()
     train_op = optimizer.minimize(loss=loss)
     accuracy = tf.reduce_sum(
         tf.cast(tf.equal(classes, labels), tf.float32)) / (424 * 512)
