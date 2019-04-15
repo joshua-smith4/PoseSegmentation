@@ -177,7 +177,7 @@ if __name__ == '__main__':
                     x_batch = np.array(x_batch)
                     y_batch = np.array(y_batch)
                     count += 1
-                    #print('running batch {}'.format(x_batch.shape[0]))
+                    print('running batch {}: shape {}'.format(count, x_batch.shape[0]), end='\r', flush=True)
                     if x_batch.shape[0] > 0:
                         sess.run(model['train_op'], feed_dict={
                             x: x_batch, y: y_batch})
