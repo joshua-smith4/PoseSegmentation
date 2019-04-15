@@ -25,7 +25,6 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
         if training_data:
             for i in range(train_divide):
                 yield x[i].astype(np.float32), y[i].astype(np.float32)
-                print('entered generator')
         else:
             for i in range(train_divide, x.shape[0]):
                 yield x[i].astype(np.float32), y[i].astype(np.float32)
