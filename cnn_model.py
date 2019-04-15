@@ -70,7 +70,7 @@ def cnn_model_fn(features, labels, training=True):
         name='upsamp1'
     )
     # 106 128 64
-    deconv3_out_shape = tf.pack([batch_size_tensor, 106, 128, 128])
+    deconv3_out_shape = tf.stack([batch_size_tensor, 106, 128, 128])
     deconv3 = tf.nn.conv2d_transpose(
         value=upsamp1,
         filter=conv3w,
@@ -85,7 +85,7 @@ def cnn_model_fn(features, labels, training=True):
         name='upsamp2'
     )
     # 212 256 128
-    deconv2_out_shape = tf.pack([batch_size_tensor, 212, 256, 64])
+    deconv2_out_shape = tf.stack([batch_size_tensor, 212, 256, 64])
     deconv2 = tf.nn.conv2d_transpose(
         value=upsamp2,
         filter=conv2w,
@@ -100,7 +100,7 @@ def cnn_model_fn(features, labels, training=True):
     )
 
     # 424 512 64
-    logits_out_shape = tf.pack([batch_size_tensor, 424, 512, 1])
+    logits_out_shape = tf.stack([batch_size_tensor, 424, 512, 1])
     logits = tf.nn.conv2d_transpose(
         value=upsamp3,
         filter=conv1w,
