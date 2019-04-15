@@ -21,7 +21,7 @@ def cnn_model_fn(features, labels, training=True):
         inputs=act1,
         pool_size=[2, 2],
         strides=2)
-
+    # 212 256 64
     conv2w = tf.Variable(
         tf.random.normal([20, 20, 64, 128]),
         dtype=tf.float32,
@@ -40,7 +40,7 @@ def cnn_model_fn(features, labels, training=True):
         inputs=act2,
         pool_size=[2, 2],
         strides=2)
-
+    # 106 128 128
     conv3w = tf.Variable(
         tf.random.normal([30, 30, 128, 64]),
         dtype=tf.float32,
@@ -59,32 +59,54 @@ def cnn_model_fn(features, labels, training=True):
         inputs=act3,
         pool_size=[2, 2],
         strides=2)
-
+    # 53 64 64
     dropout = tf.layers.dropout(
         inputs=pool3,
         rate=0.4,
         training=training)
 
+    upsamp1 = tf.tile(
+        input=dropout,
+        multiples=[1,2,2,1],
+        name='upsamp1'
+    )
+    # 106 128 64
     deconv3 = tf.nn.conv2d_transpose(
-        value=dropout,
+        value=upsamp1,
         filter=conv3w,
         output_shape=[-1, 106, 128, 128],
         strides=[1, 1, 1, 1],
         name='deconv3')
+    # 106 128 128
 
+    upsamp2 = tf.tile(
+        input=deconv3,
+        multiples=[1,2,2,1],
+        name='upsamp2'
+    )
+    # 212 256 128
     deconv2 = tf.nn.conv2d_transpose(
-        value=deconv3,
+        value=upsamp2,
         filter=conv2w,
         output_shape=[-1, 212, 256, 64],
         strides=[1, 1, 1, 1],
         name='deconv2')
 
+    upsamp3 = tf.tile(
+        input=deconv2,
+        multiples=[1,2,2,1],
+        name='upsamp3'
+    )
+
+    # 424 512 64
     logits = tf.nn.conv2d_transpose(
         value=deconv2,
         filter=conv1w,
         output_shape=[-1, 424, 512, 1],
         strides=[1, 1, 1, 1],
-        name='logits')
+        name='logits'
+    )
+    
     min_logits = tf.reduce_min(logits)
     max_logits = tf.reduce_max(logits)
     logits_scaled = (logits - min_logits) / (max_logits - min_logits) * 45
