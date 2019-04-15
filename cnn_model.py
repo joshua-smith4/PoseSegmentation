@@ -162,28 +162,26 @@ if __name__ == '__main__':
                 training_data=False
             )
             count = 0
-            while True:
+            has_training_data = True
+            while has_training_data:
                 #print('Training Loop Notifier')
-                try:
-                    x_batch = []
-                    y_batch = []
-                    for j in range(config['batch_size']):
-                        try:
-                            tmpx, tmpy = next(gen_train)
-                            x_batch += [tmpx]
-                            y_batch += [tmpy]
-                        except StopIteration:
-                            break
-                    x_batch = np.array(x_batch)
-                    y_batch = np.array(y_batch)
-                    count += 1
-                    print('running batch {}: shape {}'.format(count, x_batch.shape[0]), end='\r', flush=True)
-                    if x_batch.shape[0] > 0:
-                        sess.run(model['train_op'], feed_dict={
-                            x: x_batch, y: y_batch})
-                except StopIteration:
-                    print('looped {} times through training loop'.format(count))
-                    break
+                x_batch = []
+                y_batch = []
+                for j in range(config['batch_size']):
+                    try:
+                        tmpx, tmpy = next(gen_train)
+                        x_batch += [tmpx]
+                        y_batch += [tmpy]
+                    except StopIteration:
+                        has_training_data = False
+                        break
+                x_batch = np.array(x_batch)
+                y_batch = np.array(y_batch)
+                count += 1
+                print('running batch {}: shape {}'.format(count, x_batch.shape[0]), end='\r', flush=True)
+                if x_batch.shape[0] > 0:
+                    sess.run(model['train_op'], feed_dict={
+                        x: x_batch, y: y_batch})
             # eval test loop
             acc_total = 0.0
             count = 0
