@@ -4,10 +4,10 @@
   "number_of_trees": 100,
   "window_size_x": 101,
   "window_size_y": 101,
-  "batch_size": 20,
+  "batch_size": 40,
   "rf_model_dir": "/home/jsmith/PoseSegmentation/rf_model",
   "train_split": 0.8,
-  "max_data_files": 10,
+  "max_data_files": 100,
   "num_classes": 46,
   "num_epochs": 40,
   "cnn_model_fp": "/home/jsmith/PoseSegmentation/cnn_model/ubc3v_cnn_model.chkpt"

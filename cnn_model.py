@@ -195,4 +195,4 @@ if __name__ == '__main__':
             if acc_avg > acc_max:
                 acc_max = acc_avg
                 print('Saving epoch {}'.format(i))
-                saver.save('sess', config['cnn_model_fp'])
+                saver.save(sess, config['cnn_model_fp'])
