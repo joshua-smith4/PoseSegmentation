@@ -145,6 +145,8 @@ if __name__ == '__main__':
     )
 
     x_test, y_test = zip(*[(x_test_i,y_test_i) for x_test_i,y_test_i in gen_test])
+    x_test = np.array(x_test)
+    y_test = np.array(y_test)
     print('loaded test data: {} {}'.format(x_test.shape, y_test.shape))
 
     x = tf.placeholder(tf.float32, [None, 424, 512])
