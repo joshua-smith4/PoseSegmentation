@@ -137,6 +137,16 @@ if __name__ == '__main__':
         config = json.load(f)
 
 
+    gen_test = load_preproc_generator(
+        config['path_to_ubc3v'],
+        config['train_split'],
+        config['max_data_files'],
+        training_data=False
+    )
+
+    x_test, y_test = zip(*[(x_test_i,y_test_i) for x_test_i,y_test_i in gen_test])
+    print('loaded test data: {} {}'.format(x_test.shape, y_test.shape))
+
     x = tf.placeholder(tf.float32, [None, 424, 512])
     y = tf.placeholder(tf.float32, [None, 424, 512])
 
@@ -154,12 +164,6 @@ if __name__ == '__main__':
                 config['train_split'],
                 config['max_data_files'],
                 training_data=True
-            )
-            gen_test = load_preproc_generator(
-                config['path_to_ubc3v'],
-                config['train_split'],
-                config['max_data_files'],
-                training_data=False
             )
             count = 0
             has_training_data = True
@@ -183,15 +187,9 @@ if __name__ == '__main__':
                     sess.run(model['train_op'], feed_dict={
                         x: x_batch, y: y_batch})
             # eval test loop
-            acc_total = 0.0
-            count = 0
-            for x_test,y_test in gen_test:
-                count += 1
-                acc_total += sess.run(model['accuracy'],
-                    feed_dict={x: x_test, y: y_test})
-            print('looped {} times over test data'.format(count))
-            acc_avg = acc_total / count
-            print('Accuracy on test data: {} {}/{}'.format(acc_avg, acc_total, count))
+            acc_avg = sess.run(model['accuracy'],
+                feed_dict={x: x_test, y: y_test})
+            print('Accuracy on test data: {}'.format(acc_avg))
             if acc_avg > acc_max:
                 acc_max = acc_avg
                 print('Saving epoch {}'.format(i))
