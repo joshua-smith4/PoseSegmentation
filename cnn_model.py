@@ -60,7 +60,6 @@ if __name__ == '__main__':
         metrics=['accuracy'],
     )
 
-    gen = load_preproc_generator()
     model.fit_generator(
         generator=gen_train,
         steps_per_epoch=(num_data_points*config['train_split'])//config['batch_size'],
