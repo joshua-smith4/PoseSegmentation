@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     model = cnn_model_fn_keras()
     model.compile(
-        loss=softmax_sparse_crossentropy_ignoring_last_label,
+        loss=keras.losses.sparse_categorical_crossentropy,
         optimizer='sgd',
         metrics=['accuracy'],
     )
