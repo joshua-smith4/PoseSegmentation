@@ -57,9 +57,7 @@ def cnn_model_fn_keras():
 
     deconv7 = Conv2DTranspose(1, (3,3), activation='relu', padding='same', name='deconv7')(deconv6)
     print(deconv7.shape)
-    expand = Lambda(lambda x: tf.expand_dims(x,-1))(deconv7)
-    print(expand.shape)
-    model = Model(input_layer,expand)
+    model = Model(input_layer,deconv7)
     print(model.output_shape)
     return model
 
