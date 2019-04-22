@@ -81,6 +81,6 @@ if __name__ == '__main__':
         verbose=2,
         callbacks=[
             keras.callbacks.ModelCheckpoint(config['cnn_model_fp'],verbose=1,save_best_only=True),
-            keras.callbacks.ProgbarLogger(count_mode='samples'),
+            keras.callbacks.ProgbarLogger(count_mode='steps'),
         ],
     )
