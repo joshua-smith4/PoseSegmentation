@@ -48,7 +48,7 @@ def cnn_model_fn_keras():
     print(deconv2.shape)
 
     deconv3 = Conv2DTranspose(1, (3,3), activation='relu', padding='same', name='deconv3')(deconv2)
-    print(deconv7.shape)
+    print(deconv3.shape)
     model = Model(input_layer,deconv3)
     print(model.output_shape)
     return model
