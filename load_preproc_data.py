@@ -1,10 +1,8 @@
 import os
 import numpy as np
 from sklearn.utils import shuffle
-import tensorflow as tf
-from tensorflow.data import Dataset
 
-def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=True):
+def load_preproc_generator(fp, batch_size=50, train_split=0.8, max_files=100, training_data=True):
     if type(fp) == bytes:
         files = [f for f in os.listdir(fp) if f.endswith(b'.npz')]
     else:
@@ -23,11 +21,11 @@ def load_preproc_generator(fp, train_split=0.8, max_files=100, training_data=Tru
         random_state+=1
         train_divide = int(x.shape[0]*train_split)
         if training_data:
-            for i in range(train_divide):
-                yield x[i].astype(np.float32), y[i].astype(np.float32)
+            for i in range(0,train_divide,batch_size):
+                yield x[i:i+batch_size].astype(np.float32), y[i:i+batch_size].astype(np.float32)
         else:
-            for i in range(train_divide, x.shape[0]):
-                yield x[i].astype(np.float32), y[i].astype(np.float32)
+            for i in range(train_divide,x.shape[0],batch_size):
+                yield x[i:i+batch_size].astype(np.float32), y[i:i+batch_size].astype(np.float32)
 
 
 def load_preproc_generator_windowed(fp, wx, wy, pad="edge", padArgs={}, train_split=0.8, max_files=100, training_data=True):
