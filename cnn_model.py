@@ -25,10 +25,11 @@ def model_predict(model, x):
     y = np.argmax(y, axis=3)
     return y
 
-def categorical_crossentropy_ignore_first(y_true, y_pred):
-    print(y_true.shape, y_pred.shape, 'ytrue and ypred')
-    return keras.losses.categorical_crossentropy(y_true,y_pred)
+def categorical_crossentropy_ignore_first_2d(y_true, y_pred):
+    return keras.losses.categorical_crossentropy(y_true[:,:,1:],y_pred[:,:,1:])
 
+def categorical_accuracy_ignore_first_2d(y_true, y_pred):
+    return keras.metrics.categorical_accuracy(y_true[:,:,1:],y_pred[:,:,1:])
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
@@ -54,9 +55,9 @@ if __name__ == '__main__':
         print('building model from the start')
         model = cnn_model_fn_keras()
         model.compile(
-            loss=categorical_crossentropy_ignore_first,
+            loss=categorical_crossentropy_ignore_first_2d,
             optimizer='sgd',
-            metrics=['categorical_accuracy'],
+            metrics=[categorical_accuracy_ignore_first_2d],
         )
 
     model.fit_generator(
