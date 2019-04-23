@@ -43,7 +43,7 @@ def cnn_model_fn_keras():
     up1 = Lambda(lambda x: tf.image.resize_bilinear(x,(424,512)))(pool1)
     print(up1.shape)
     logits = Conv2DTranspose(46, (3,3), padding='same', name='deconv1')(up1)
-    print(deconv1.shape)
+    print(logits.shape)
     # flat_logits = Reshape((424*512*46,1))(logits)
     probs = keras.activation.softmax(logits, axis=3)
     print(probs.shape)
