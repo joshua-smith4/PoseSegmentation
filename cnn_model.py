@@ -88,7 +88,6 @@ if __name__ == '__main__':
     # train model
     model.fit_generator(
         generator=gen_train,
-       # steps_per_epoch=20,
         steps_per_epoch=(num_data_points*config['train_split'])//config['batch_size'],
         epochs=config['num_epochs'],
         verbose=1,
