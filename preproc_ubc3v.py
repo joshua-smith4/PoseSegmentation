@@ -3,27 +3,11 @@ from PIL import Image
 import h5py
 import numpy as np
 
-def load_itop_side(base_dir):
-	f_train_x = h5py.File(os.path.join(base_dir,'ITOP_side_train_depth_map.h5'),'r')
-	f_train_y = h5py.File(os.path.join(base_dir,'ITOP_side_train_labels.h5'),'r')
-	f_test_x = h5py.File(os.path.join(base_dir,'ITOP_side_test_depth_map.h5'),'r')
-	f_test_y = h5py.File(os.path.join(base_dir,'ITOP_side_test_labels.h5'),'r')
-	
-	valid_mask_train = f_train_y['is_valid'][()].astype(bool)
-	valid_mask_test = f_test_y['is_valid'][()].astype(bool)
-	
-	train_x = f_train_x['data'][()][valid_mask_train]
-	train_y = f_train_y['segmentation'][()][valid_mask_train]
-	test_x = f_test_x['data'][()][valid_mask_test]
-	test_y = f_test_y['segmentation'][()][valid_mask_test]
-	
-	print(train_x.shape,train_y.shape)
-	print(test_x.shape,test_y.shape)
-	return train_x, train_y, test_x, test_y
-		
-# train_x, train_y, test_x, test_y = load_itop_side("/home/jsmith/itop")
-
-
+# color to body part mapping
+# used to change rgb images to body part labels
+# index of array corresponds to body part index
+# 45 different colors for 45 different body parts
+# rgba(0,0,0,0) is reserved for background
 color_to_bp_map = np.array([
     [255, 106, 0],
     [255, 0, 0],
@@ -73,43 +57,64 @@ color_to_bp_map = np.array([
 ], dtype=np.int32)
 
 
+# loads and converts entire ubc3v dataset
+# requires a lot of memory, close to 200 GB
 
+# base_dir is directory where ubc3v is downloaded
 def load_ubc3v(base_dir):
+	# path template used to target specific sections, subsections, train/test, and camera
     dir_path_template = os.path.join(
         base_dir, "{section}", "{subsection}", "images", "{xy}", "{camera}")
+	# full path to individual images
     full_path_template = os.path.join(
         dir_path_template, "mayaProject.{idx:06d}.png")
 
+	# function used to extract a specific section ('train', 'test', or 'valid')
     def extract_section(section):
         print('working on {} data'.format(section))
         print(os.listdir(os.path.join(base_dir,section)))
-
+		# each section is subdivided into subsections
+		# this gets all subsections in section directory
         subsections = [int(direct) for direct in os.listdir(
             os.path.join(base_dir, section)) if os.path.isdir(os.path.join(base_dir,section,direct))]
         subsections.sort()
         x = []
         y = []
+		# loop through all subsections
         for subsection in subsections:
             print('subsection: {}'.format(subsection))
             print('len(x): {}'.format(len(x)))
             print('len(y): {}'.format(len(y)))
+			# loop through image and label data
             for xy in ['depthRender', 'groundtruth']:
                 print(xy)
+				# loop through each camera (same pose from 3 different angles)
                 for camera in ['Cam1', 'Cam2', 'Cam3']:
                     print(camera)
                     num_fps = len(os.listdir(dir_path_template.format(section=section, subsection=subsection, xy=xy, camera=camera)))
+					# get number of images in current subsection and camera
                     for i in range(num_fps):
+						# construct file path to specific image data
                         fp = full_path_template.format(section=section,subsection=subsection,xy=xy,camera=camera,idx=i+1)
-                        # print('Image Number: {}'.format(i))
+                        # open image and convert to numpy array
                         img = np.asarray(Image.open(fp))
                         if xy == 'depthRender':
+							# case where image is not label data
+							# use function provided in Matlab API for ubc3v here:
+							# https://github.com/ashafaei/ubc3v
+							# to convert from gray scale image to depth data
                             x.append(img[:,:,0].astype(np.float16)/255.0 * (8 - .5) + .5)
                         elif xy == 'groundtruth':
+							# prepare label result array
                             res = np.zeros((424,512), dtype=np.uint8)
+							# extract channels from input
+							# and create alpha mask
+							# anywhere where alpha is equal to zero is background
                             alpha = img[:,:,3] == 255
                             red = img[:,:,0]
                             green = img[:,:,1]
                             blue = img[:,:,2]
+							# go through every color in map and label it accordingly in res
                             for i in range(len(color_to_bp_map)):
                                 mask = alpha & (np.abs(red - color_to_bp_map[i,0]) <= 3) & (np.abs(green - color_to_bp_map[i,1]) <= 3) & (np.abs(blue - color_to_bp_map[i,2]) <= 3)
                                 res[mask] = i+1
@@ -122,68 +127,81 @@ def load_ubc3v(base_dir):
                         del img
 
         return np.array(x), np.array(y)
+	# get each section and return values
     train_x, train_y = extract_section('train')
     test_x, test_y = extract_section('test')
     valid_x, valid_y = extract_section('valid')
     return train_x, train_y, test_x, test_y, valid_x, valid_y
 
-#train_x,train_y,test_x,test_y,valid_x,valid_y = load_ubc3v('/home/jsmith/ubc3v/hard_pose')
-
-#np.savez('ubc3v_data.npz',train_x=train_x,train_y=train_y,test_x=test_x,test_y=test_y,valid_x=valid_x,valid_y=valid_y)
-
-
+# because previous function require so much memory
+# this function was made to load one subsection at a time
 def load_ubc3v_subsection(base_dir, section, subsection):
+	# permitted error in each channel for matching color in label
+	# images to body part color in color_to_bp_map
     color_error = 10
+	# get subsection string, can be passed as an int
     subsection = str(subsection)
-    dir_path_template = os.path.join(
-        base_dir, "{section}", "{subsection}", "images", "{xy}", "{camera}")
-    full_path_template = os.path.join(
-        dir_path_template, "mayaProject.{idx:06d}.png")
+	# path template used to target specific sections, subsections, train/test, and camera
+	dir_path_template = os.path.join(
+		base_dir, "{section}", "{subsection}", "images", "{xy}", "{camera}")
+	# full path to individual images
+	full_path_template = os.path.join(
+		dir_path_template, "mayaProject.{idx:06d}.png")
     assert(os.path.isdir(os.path.join(base_dir, section, subsection)))
     x = []
     y = []
+	# loop image and label data
     for xy in ['depthRender', 'groundtruth']:
-        print(xy)
+		# loop through each camera (same pose from 3 different angles)
         for camera in ['Cam1', 'Cam2', 'Cam3']:
             print(camera)
             num_fps = len(os.listdir(dir_path_template.format(section=section, subsection=subsection, xy=xy, camera=camera)))
             for i in range(num_fps):
+				# get individual file paths
                 fp = full_path_template.format(section=section,subsection=subsection,xy=xy,camera=camera,idx=i+1)
-                # print('Image Number: {}'.format(i))
                 tmp = Image.open(fp)
-                #print(tmp.mode)
                 img = np.asarray(tmp)
-                #print(img.shape)
                 if xy == 'depthRender':
+					# get background and put in mask
                     mask = img[:,:,0] != 0
+					# convert from grayscale to depth measure
                     scaledImg = img[:,:,0].astype(np.float16)/255.0 * (8 - .5) + .5
+					# zero out background
                     x.append(scaledImg*mask)
                 elif xy == 'groundtruth':
+					# prepare result label array
                     res = np.zeros((424,512), dtype=np.uint8)
+					# extract channels and create alpha mask
+					# anywhere alpha is 0 is background
                     alpha = img[:,:,3] == 255
                     red = img[:,:,0].astype(np.int32)
                     green = img[:,:,1].astype(np.int32)
                     blue = img[:,:,2].astype(np.int32)
+					# loop through color_to_bp_map and label pixels that match
+					# as body parts (0 background, 1-45 body parts)
                     for i in range(len(color_to_bp_map)):
                         mask = alpha & (np.abs(red - color_to_bp_map[i,0]) <= color_error) & (np.abs(green - color_to_bp_map[i,1]) <= color_error) & (np.abs(blue - color_to_bp_map[i,2]) <= color_error)
                         res[mask] = i+1
                     y.append(res)
     return np.array(x), np.array(y)
 
+# load and preprocess data when called as main
+# make sure to change base_dir location in call
+# to load_ubc3v_subsection below
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+	# section 'train', 'test', or 'valid'
     parser.add_argument("-s", default="train")
+	# subsection to be processed
     parser.add_argument("-ss", type=int)
+	# 'hard', 'inter', or 'easy' used to drill into the
+	# three partitions in the dataset
     parser.add_argument("-p", default="easy")
     args = parser.parse_args()
     print(args.p)
     print(args.s)
     print(args.ss)
     tx, ty = load_ubc3v_subsection('/home/jsmith/ubc3v/{}_pose'.format(args.p),args.s,args.ss)
+	# save extracted data in numpy array format
     np.savez('{}_{}_{:04d}.npz'.format(args.p,args.s,args.ss), x=tx, y=ty)
-
-
-
-
-    
