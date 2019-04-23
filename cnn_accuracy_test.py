@@ -1,6 +1,7 @@
 from keras.models import load_model
 import tensorflow as tf
 from load_preproc_data import load_preproc_generator
+import cnn_model
 import json
 
 # get configuration
@@ -17,7 +18,14 @@ gen_test = load_preproc_generator(
 
 num_data_points = 231231
 # load saved model from training
-model = load_model(config['cnn_model_fp'], custom_objects={'tf':tf})
+model = load_model(
+    config['cnn_model_fp'],
+    custom_objects={
+        'tf':tf,
+        'categorical_accuracy_ignore_first_2d': cnn_model.categorical_accuracy_ignore_first_2d,
+        'categorical_crossentropy_ignore_first_2d': cnn_model.categorical_crossentropy_ignore_first_2d,
+    }
+)
 
 # evalute model on test data
 model.evaluate_generator(

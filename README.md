@@ -1,5 +1,13 @@
-# PoseSegmentation
+# Human Pose Segmentation with FCN
 Final project for CS 7680 - image segmentation using depth imagery of the human pose
+
+## Steps to run code
+1. Download UBC3V dataset from [here](https://github.com/ashafaei/ubc3v).
+2. Run
+```python
+python
+```
+
 
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow
