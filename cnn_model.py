@@ -70,7 +70,7 @@ if __name__ == '__main__':
         training_data=True
     )
 
-    if args.load == True:
+    if args.load:
         print('loading model for continued training')
         model = keras.models.load_model(config['cnn_model_fp'],custom_objects={'tf':tf})
     else:
