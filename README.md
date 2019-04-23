@@ -29,6 +29,7 @@ cnn_accuracy_test.py | Script for evaluating the categorical accuracy of the sav
 cnn_model.py | File containing the model description and functions to build model, custom loss function, custom accuracy measure, and train model
 configuration.json | File containing configuration parameters for the entire project
 load_preproc_data.py | File containing function to create generators for incrementally loading and returning training and testing data from ubc3v_preproc.
+model.png | Image of model architecture
 preproc_ubc3v.py | Functions and script for preprocessing ubc3v dataset into numpy arrays for use in training or testing.
 README.md | Project description and report
 requirements.txt | Project dependency list
@@ -39,6 +40,7 @@ The training process is really slow. One should expect training to take about 4 
 ## System components
 ### Dataset
 ### The FCN model
+![Model architecture](/model.png?raw=true)
 ### Training (Loss and Evaluation Metrics)
 ### Shortcomings
 ### External Packages
@@ -46,7 +48,16 @@ The training process is really slow. One should expect training to take about 4 
 * Tensorflow
 * Keras
 
-
+## Improvements
+## Changes
+## Special structures or tricks
+## Difficulties during development
+## Comparison with original approach
+## Experimental Results
+Custom Loss Function: 0.173386267145078
+Custom Categorical Accuracy: 0.00949561961465289
+## Notes
+Training time
 
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow

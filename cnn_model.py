@@ -3,6 +3,7 @@ import keras
 from keras.layers import Conv2D, Input, MaxPooling2D, Dropout, Conv2DTranspose, Reshape, Lambda
 from keras.models import Model
 from load_preproc_data import load_preproc_generator
+import numpy as np
 
 # create keras model of proposed segmentation architecture FCN
 
