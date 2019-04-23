@@ -42,14 +42,12 @@ def cnn_model_fn_keras():
     # 212 256
     up1 = Lambda(lambda x: tf.image.resize_bilinear(x,(424,512)))(pool1)
     print(up1.shape)
-    deconv1 = Conv2DTranspose(32, (3,3), activation='relu', padding='same', name='deconv1')(up1)
+    logits = Conv2DTranspose(46, (3,3), padding='same', name='deconv1')(up1)
     print(deconv1.shape)
-    deconv2 = Conv2DTranspose(32, (3,3), activation='relu', padding='same', name='deconv2')(deconv1)
-    print(deconv2.shape)
-
-    deconv3 = Conv2DTranspose(1, (3,3), activation='relu', padding='same', name='deconv3')(deconv2)
-    print(deconv3.shape)
-    model = Model(input_layer,deconv3)
+    # flat_logits = Reshape((424*512*46,1))(logits)
+    probs = keras.activation.softmax(logits, axis=3)
+    print(probs.shape)
+    model = Model(input_layer,probs)
     print(model.output_shape)
     return model
 
@@ -73,13 +71,15 @@ if __name__ == '__main__':
     )
 
     if args.load:
+        print('loading model for continued training')
         model = keras.models.load_model(config['cnn_model_fp'],custom_objects={'tf':tf})
     else:
+        print('building model from the start')
         model = cnn_model_fn_keras()
         model.compile(
-            loss=keras.losses.mean_squared_error,
+            loss=keras.losses.sparse_categorical_crossentropy,
             optimizer='sgd',
-            metrics=['accuracy'],
+            metrics=['sparse_categorical_accuracy'],
         )
 
     model.fit_generator(
