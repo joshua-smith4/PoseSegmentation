@@ -19,9 +19,9 @@ def cnn_model_fn_keras():
     print(pool1.shape)
     # 212 256
     up1 = Lambda(lambda x: tf.image.resize_bilinear(x,(424,512)))(pool1)
-
+    added = keras.layers.add([up1,in_reshape])
     print(up1.shape)
-    logits = Conv2DTranspose(46, (3,3), activation='softmax', padding='same', name='deconv1')(up1)
+    logits = Conv2DTranspose(46, (3,3), activation='softmax', padding='same', name='deconv1')(added)
     print(logits.shape)
     flat_logits = Reshape((424*512,46))(logits)
     print(flat_logits.shape)
