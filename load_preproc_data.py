@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from sklearn.utils import shuffle
+from keras.utils import to_categorical
 
 
 def load_preproc_generator(fp, batch_size=50, train_split=0.8, training_data=True):
@@ -21,7 +22,9 @@ def load_preproc_generator(fp, batch_size=50, train_split=0.8, training_data=Tru
         train_divide = int(x.shape[0] * train_split)
         if training_data:
             for i in range(0, train_divide, batch_size):
-                yield x[i:i + batch_size].astype(np.float32), y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1)
+                x_out = x[i:i + batch_size].astype(np.float32)
+                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1)).reshape(-1,424*512*46,1)
+                yield x_out, y_out
         else:
             for i in range(train_divide, x.shape[0], batch_size):
                 yield x[i:i + batch_size].astype(np.float32), y[i:i + batch_size].astype(np.float32)
