@@ -55,6 +55,11 @@ def cnn_model_fn_keras():
 
 
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--load',type=bool,default=True)
+    args = parser.parse_args()
+
     num_data_points = 231231
     import json
     with open('configuration.json') as f:
@@ -67,20 +72,24 @@ if __name__ == '__main__':
         training_data=True
     )
 
-    model = cnn_model_fn_keras()
-    model.compile(
-        loss=keras.losses.sparse_categorical_crossentropy,
-        optimizer='sgd',
-        metrics=['accuracy'],
-    )
+    if args.load:
+        model = keras.models.load_model(config['cnn_model_fp'],custom_objects={'tf':tf})
+    else:
+        model = cnn_model_fn_keras()
+        model.compile(
+            loss=keras.losses.mean_squared_error,
+            optimizer='sgd',
+            metrics=['accuracy'],
+        )
 
     model.fit_generator(
         generator=gen_train,
+       # steps_per_epoch=20,
         steps_per_epoch=(num_data_points*config['train_split'])//config['batch_size'],
         epochs=30,
-        verbose=2,
+        verbose=1,
         callbacks=[
-            keras.callbacks.ModelCheckpoint(config['cnn_model_fp'],verbose=1,save_best_only=True),
+            keras.callbacks.ModelCheckpoint(config['cnn_model_fp'],verbose=1),
             keras.callbacks.ProgbarLogger(count_mode='steps'),
         ],
     )
