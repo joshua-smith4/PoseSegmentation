@@ -55,7 +55,7 @@ def cnn_model_fn_keras():
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--load',type=bool,default=True)
+    parser.add_argument('--load',type=bool,default=False)
     args = parser.parse_args()
 
     num_data_points = 231231
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         training_data=True
     )
 
-    if args.load:
+    if args.load == True:
         print('loading model for continued training')
         model = keras.models.load_model(config['cnn_model_fp'],custom_objects={'tf':tf})
     else:
