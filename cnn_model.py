@@ -21,7 +21,7 @@ def cnn_model_fn_keras():
     up1 = Lambda(lambda x: tf.image.resize_bilinear(x,(424,512)))(pool1)
 
     print(up1.shape)
-    logits = Conv2DTranspose(46, (3,3), padding='same', name='deconv1')(up1)
+    logits = Conv2DTranspose(46, (3,3), activation='softmax', padding='same', name='deconv1')(up1)
     print(logits.shape)
     flat_logits = Reshape((424*512,46))(logits)
     print(flat_logits.shape)
@@ -33,7 +33,7 @@ def cnn_model_fn_keras():
 
 def model_predict(model, x):
     y = model.predict(x)
-    y = y.reshape(-1, 424,512,46)
+    # y = y.reshape(-1, 424,512,46)
     y = np.argmax(y, axis=3)
     return y
 
