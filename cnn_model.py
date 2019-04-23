@@ -8,34 +8,26 @@ from load_preproc_data import load_preproc_generator
 def cnn_model_fn_keras():
     input_shape = (424,512)
     input_layer = Input(shape=input_shape,dtype='float32',name='input_layer')
-    print(input_layer.shape)
     in_reshape = Reshape(input_shape + (1,))(input_layer)
-    print(in_reshape.shape)
     conv1 = Conv2D(32, (3, 3), activation='relu', padding='same', name='conv2d_1')(in_reshape)
-    print(conv1.shape)
     conv2 = Conv2D(32, (3, 3), activation='relu', padding='same', name='conv2d_2')(conv1)
-    print(conv2.shape)
     pool1 = MaxPooling2D((2,2),strides=(2,2))(conv2)
-    print(pool1.shape)
     # 212 256
     up1 = Lambda(lambda x: tf.image.resize_bilinear(x,(424,512)))(pool1)
     added = keras.layers.add([up1,in_reshape])
-    print(up1.shape)
     logits = Conv2DTranspose(46, (3,3), activation='softmax', padding='same', name='deconv1')(added)
-    print(logits.shape)
     flat_logits = Reshape((424*512,46))(logits)
-    print(flat_logits.shape)
-    # probs = keras.activations.softmax(logits, axis=3)
-    # print(probs.shape)
     model = Model(input_layer,flat_logits)
-    print(model.output_shape)
     return model
 
 def model_predict(model, x):
     y = model.predict(x)
-    # y = y.reshape(-1, 424,512,46)
     y = np.argmax(y, axis=3)
     return y
+
+def categorical_crossentropy_ignore_first(y_true, y_pred):
+    print(y_true.shape, y_pred.shape, 'ytrue and ypred')
+    return keras.losses.categorical_crossentropy(y_true,y_pred)
 
 if __name__ == '__main__':
     import argparse
@@ -62,7 +54,7 @@ if __name__ == '__main__':
         print('building model from the start')
         model = cnn_model_fn_keras()
         model.compile(
-            loss=keras.losses.categorical_crossentropy,
+            loss=categorical_crossentropy_ignore_first,
             optimizer='sgd',
             metrics=['categorical_accuracy'],
         )
