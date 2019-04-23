@@ -80,7 +80,7 @@ if __name__ == '__main__':
         model.compile(
             loss=keras.losses.sparse_categorical_crossentropy,
             optimizer='sgd',
-            metrics=['sparse_categorical_accuracy'],
+            metrics=['accuracy'],
         )
 
     model.fit_generator(
