@@ -20,6 +20,34 @@ The --load option, if included, will load the saved model and continue training 
 python cnn_accuracy_test.py
 ```
 This loads in the saved model from cnn_model and creates a generator the incrementally loads test data from ubc3v_preproc and evaluates the model using the custom metric categorical_accuracy_ignore_first_2d defined in cnn_model.py.
+
+### File descriptions
+File | Description
+--- | ---
+cnn_model/ubc3v_cnn_model.chkpt | Trained saved Keras model for performing image segmentation on ubc3v_preproc dataset
+cnn_accuracy_test.py | Script for evaluating the categorical accuracy of the saved model on testing data
+cnn_model.py | File containing the model description and functions to build model, custom loss function, custom accuracy measure, and train model
+configuration.json | File containing configuration parameters for the entire project
+load_preproc_data.py | File containing function to create generators for incrementally loading and returning training and testing data from ubc3v_preproc.
+preproc_ubc3v.py | Functions and script for preprocessing ubc3v dataset into numpy arrays for use in training or testing.
+README.md | Project description and report
+requirements.txt | Project dependency list
+
+## Time to execute code
+The training process is really slow. One should expect training to take about 4 hours per epoch depending on the hardware and configuration. Testing (cnn_accuracy_test.py) takes about 45 minutes to return an accuracy measure.
+
+## System components
+### Dataset
+### The FCN model
+### Training (Loss and Evaluation Metrics)
+### Shortcomings
+### External Packages
+* Numpy
+* Tensorflow
+* Keras
+
+
+
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow
 2. Created generators to incrementally load chunks of dataset. This was done to reduce the memory requirements of the program.

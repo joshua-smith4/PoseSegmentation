@@ -28,8 +28,10 @@ model = load_model(
 )
 
 # evalute model on test data
-model.evaluate_generator(
+acc = model.evaluate_generator(
     generator=gen_test,
     steps=num_data_points*(1-config['train_split'])-1,
     verbose=1,
 )
+
+print(acc)
