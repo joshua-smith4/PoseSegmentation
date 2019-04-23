@@ -37,12 +37,12 @@ def load_preproc_generator(fp, batch_size=50, train_split=0.8, training_data=Tru
                 # extract x
                 x_out = x[i:i + batch_size].astype(np.float32)
                 # change y to flattened categorical data for loss function
-                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1))
+                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1),num_classes=46)
                 yield x_out, y_out
         else:
             # same as above except with testing data
             for i in range(train_divide, x.shape[0], batch_size):
                 x_out = x[i:i + batch_size].astype(np.float32)
-                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1))
+                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1),num_classes=46)
                 print(y_out.shape)
                 yield x_out, y_out
