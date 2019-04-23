@@ -44,7 +44,7 @@ def cnn_model_fn_keras():
     print(up1.shape)
     logits = Conv2DTranspose(46, (3,3), activation='softmax', padding='same', name='deconv1')(up1)
     print(logits.shape)
-    flat_logits = Reshape((424*512,46))(logits)
+    flat_logits = Reshape((424*512*46,1))(logits)
     print(flat_logits.shape)
     # probs = keras.activations.softmax(logits, axis=3)
     # print(probs.shape)
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         model.compile(
             loss=keras.losses.sparse_categorical_crossentropy,
             optimizer='sgd',
-            metrics=['accuracy'],
+            metrics=['sparse_categorical_accuracy'],
         )
 
     model.fit_generator(
