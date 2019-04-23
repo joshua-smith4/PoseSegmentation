@@ -23,7 +23,9 @@ def load_preproc_generator(fp, batch_size=50, train_split=0.8, training_data=Tru
         if training_data:
             for i in range(0, train_divide, batch_size):
                 x_out = x[i:i + batch_size].astype(np.float32)
-                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1)).reshape(-1,424*512*46)
+                y_out = to_categorical(y[i:i + batch_size].astype(np.float32).reshape(-1,424*512,1))
+                print('y_out shape', y_out.shape)
+                y_out = y_out.reshape(-1,424*512*46)
                 yield x_out, y_out
         else:
             for i in range(train_divide, x.shape[0], batch_size):
