@@ -44,7 +44,7 @@ def cnn_model_fn_keras():
     print(up1.shape)
     logits = Conv2DTranspose(46, (3,3), activation='softmax', padding='same', name='deconv1')(up1)
     print(logits.shape)
-    flat_logits = Reshape((424*512,46))(logits)
+    flat_logits = Reshape((-1,424*512,46))(logits)
     print(flat_logits.shape)
     # probs = keras.activations.softmax(logits, axis=3)
     # print(probs.shape)
