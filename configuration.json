@@ -10,5 +10,5 @@
   "max_data_files": 100,
   "num_classes": 46,
   "num_epochs": 40,
-  "cnn_model_fp": "/home/jsmith/PoseSegmentation/cnn_model/ubc3v_cnn_model.chkpt"
+  "cnn_model_fp": "./cnn_model/ubc3v_cnn_model.chkpt"
 }

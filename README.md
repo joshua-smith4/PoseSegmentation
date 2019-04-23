@@ -3,12 +3,23 @@ Final project for CS 7680 - image segmentation using depth imagery of the human 
 
 ## Steps to run code
 1. Download UBC3V dataset from [here](https://github.com/ashafaei/ubc3v).
-2. Run
-```python
-python
+2. Ensure that the packages and version numbers in requirements.txt match the current python environment. The code is written to be compatible with python 3.6.
+3. Run
+```sh
+python preproc_ubc3v.py -s=[train,test,valid] -ss=[subsection] -p=[easy,inter,hard] -b=/path/to/ubc3v/base/folder
 ```
-
-
+This command should be run multiple times on many subsections and train/test data in order to preprocess data into the numpy format. All the generated .npz files should be placed in a directory we will call ubc3v_preproc.
+4. Edit configuration.json to refect the current environment. (e.g. path_to_ubc3v should be /path/to/ubc3v_preproc, cnn_model_fp should be path to saved CNN model in cnn_model directory).
+5. Training is performed by running the following command
+```sh
+python cnn_model.py [--load]
+```
+The --load option, if included, will load the saved model and continue training from its current state. If the --load option is excluded, a new model is created and training starts from the beginning.
+6. Evaluation is performed by running the following command
+```sh
+python cnn_accuracy_test.py
+```
+This loads in the saved model from cnn_model and creates a generator the incrementally loads test data from ubc3v_preproc and evaluates the model using the custom metric categorical_accuracy_ignore_first_2d defined in cnn_model.py.
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow
 2. Created generators to incrementally load chunks of dataset. This was done to reduce the memory requirements of the program.

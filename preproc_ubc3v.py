@@ -186,8 +186,6 @@ def load_ubc3v_subsection(base_dir, section, subsection):
     return np.array(x), np.array(y)
 
 # load and preprocess data when called as main
-# make sure to change base_dir location in call
-# to load_ubc3v_subsection below
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -198,10 +196,12 @@ if __name__ == "__main__":
 	# 'hard', 'inter', or 'easy' used to drill into the
 	# three partitions in the dataset
     parser.add_argument("-p", default="easy")
+	# base dir of ubc3v dataset
+	parser.add_argument('-b')
     args = parser.parse_args()
     print(args.p)
     print(args.s)
     print(args.ss)
-    tx, ty = load_ubc3v_subsection('/home/jsmith/ubc3v/{}_pose'.format(args.p),args.s,args.ss)
+    tx, ty = load_ubc3v_subsection(os.path.join(args.b, '{}_pose').format(args.p),args.s,args.ss)
 	# save extracted data in numpy array format
     np.savez('{}_{}_{:04d}.npz'.format(args.p,args.s,args.ss), x=tx, y=ty)
