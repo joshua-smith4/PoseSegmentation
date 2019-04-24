@@ -108,11 +108,20 @@ Also, I had never worked with a dataset that was too large to fit in memory befo
 3. The GPU that I am using is not large enough to hold a deeper/larger network than this. This limited the possible architectures that I could experiment with and prolonged training time.
 
 ## Experimental Results and Comparison with Shotton et. al.
+
 The final results of the loss function and accuracy are shown below:
 
-Custom Loss Function Value | Custom Categorical Accuracy
-:---: | :---:
-0.1733 | 0.00949 (0.9%)
+Method | Custom Loss Function Value | Accuracy
+:--- | :---: | :---:
+Proposed FCN | 0.1733 | Custom categorical accuracy: 0.00949 (0.9%)
+Shotton et. al. | | Average per-class accuracy: 59%
+
+
+The above results are produced by running the command
+```sh
+python cnn_accuracy_test.py
+```
+as explained in the steps above and after preprocessing the data in the manner described.
 
 Some example outputs of the proposed FCN and those published by Shotton et. al. are shown in the table below.
 
@@ -125,6 +134,8 @@ Label Data | Output of Proposed FCN | Example Shotton et. al. Output
 Ideally, the output of the FCN would be identical to the label data on the left.
 
 These images seem to suggest that the FCN was able to correctly learn the segmentation between the background and foreground but suffered at learning the segmentation between different body parts. Shotton et. al. had much better results in distinguishing between body parts.
+
+It should be noted that the two methods compared above used tow different similar datasets. The one used in Shotton et. al. was not included for download. UBC3V was generated in a very similar way but included a larger variety in poses and character models as well as 46 classes where the dataset in the paper had 32.
 
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow
