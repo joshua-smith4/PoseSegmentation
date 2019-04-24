@@ -50,7 +50,11 @@ The preprocessing on UBC3V converts the grayscale images to depth data using the
 As the data is loaded into memory to be fed to the FCN for training or testing, the labels are converted to categorical arrays and flattened. Each label is a 2D vector with 424*512 elements in the first dimension (one for each pixel) and 46 elements in the second where only a single element is 1 and the rest are 0s. The 46 elements represent the 46 possible classes.
 
 ### The FCN model
+The image below shows the proposed FCN architecture.
+
 ![Model architecture](/model.png?raw=true)
+
+The model accepts depth images with the dimensions batches x 424 x 512. The input is then passed to a reshape layer that converts the input into a tensor with the shape batches x 424 x 512 x 1 because convolutional layers in Keras expect a channels dimension. The output of reshape is sent to two locations. First it is sent through several convolutional layers with kernel sizes 3 x 3 and then to a max pooling layer that reduces the dimensionality to 212 x 256 x 32.
 ### Training (Loss and Evaluation Metrics)
 ### Shortcomings
 ### External Packages
