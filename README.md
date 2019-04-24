@@ -108,8 +108,10 @@ Also, I had never worked with a dataset that was too large to fit in memory befo
 3. The GPU that I am using is not large enough to hold a deeper/larger network than this. This limited the possible architectures that I could experiment with and prolonged training time.
 
 ## Experimental Results and Comparison with Shotton et. al.
-Custom Loss Function: 0.173386267145078
-Custom Categorical Accuracy: 0.00949561961465289
+The final results of the loss function and accuracy are shown below:
+Custom Loss Function Value | Custom Categorical Accuracy
+:---: | :---:
+0.1733 | 0.00949 (0.9%)
 
 Label Data | Output of Proposed FCN | Example Shotton et. al. Output
 :---: | :---: | :---:
