@@ -137,6 +137,50 @@ These images seem to suggest that the FCN was able to correctly learn the segmen
 
 It should be noted that the two methods compared above used tow different similar datasets. The one used in Shotton et. al. was not included for download. UBC3V was generated in a very similar way but included a larger variety in poses and character models as well as 46 classes where the dataset in the paper had 32.
 
+The image results were produced using a script like the one below:
+```python
+import numpy as np
+from keras.models import load_model
+import cnn_model
+import tensorflow as tf
+from load_preproc_data import load_preproc_generator
+import json
+
+# get configuration
+with open('configuration.json') as f:
+    config = json.load(f)
+
+# create generator for test data
+gen_train = load_preproc_generator(
+    config['path_to_ubc3v'],
+    batch_size=config['batch_size'],
+    train_split=config['train_split'],
+    training_data=True
+)
+
+# load saved model from training
+model = load_model(
+    config['cnn_model_fp'],
+    custom_objects={
+        'tf':tf,
+        'categorical_accuracy_ignore_first_2d': cnn_model.categorical_accuracy_ignore_first_2d,
+        'categorical_crossentropy_ignore_first_2d': cnn_model.categorical_crossentropy_ignore_first_2d,
+    }
+)
+
+x,y = next(gen_train)
+
+preds = model_predict(model, x)
+preds = preds.reshape(-1, 424, 512, 46)
+preds = np.argmax(preds, axis=3)
+from PIL import Image
+for i in range(preds.shape[0]):
+  img = preds[i].astype(np.float32)
+  img = (img*255/np.max(img)).astype(np.uint8)
+  img = Image.fromarray(img, 'P')
+  img.show()
+```
+
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow
 2. Created generators to incrementally load chunks of dataset. This was done to reduce the memory requirements of the program.
