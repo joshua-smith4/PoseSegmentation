@@ -109,9 +109,12 @@ Also, I had never worked with a dataset that was too large to fit in memory befo
 
 ## Experimental Results and Comparison with Shotton et. al.
 The final results of the loss function and accuracy are shown below:
+
 Custom Loss Function Value | Custom Categorical Accuracy
 :---: | :---:
 0.1733 | 0.00949 (0.9%)
+
+Some example outputs of the proposed FCN and those published by Shotton et. al. are shown in the table below.
 
 Label Data | Output of Proposed FCN | Example Shotton et. al. Output
 :---: | :---: | :---:
@@ -119,6 +122,9 @@ Label Data | Output of Proposed FCN | Example Shotton et. al. Output
 ![](/results/gt_pose2.png?raw=true) | ![](/results/nn_pose2.png?raw=true) | ![](/results/sh_pose2.png?raw=true)
 ![](/results/gt_pose3.png?raw=true) | ![](/results/nn_pose3.png?raw=true)
 
+Ideally, the output of the FCN would be identical to the label data on the left.
+
+These images seem to suggest that the FCN was able to correctly learn the segmentation between the background and foreground but suffered at learning the segmentation between different body parts. Shotton et. al. had much better results in distinguishing between body parts.
 
 ## Work to date - 4/7/2019
 1. Added preprocessing code to convert UBC3V to compatible format with Tensorflow
