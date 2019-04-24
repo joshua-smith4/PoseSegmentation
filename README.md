@@ -39,6 +39,16 @@ The training process is really slow. One should expect training to take about 4 
 
 ## System components
 ### Dataset
+The UBC3V dataset is a synthetically generated dataset for human pose estimation. Image/input data is stored as 8-bit grayscale images which can be converted to depth data using the following function:
+```
+depth_data = orig_data / 255.0 * (8 - 0.5) + 0.5
+```
+Label data are stored as RGBA images where the alpha channel is either 0 (background) or 255 (foreground) and different color combinations of RGB represent different body regions. UBC3V has 45 different labels for body regions. Those plus the background makes 46 classes.
+
+The preprocessing on UBC3V converts the grayscale images to depth data using the above function and labels to images where each pixel is a value in the range [0,45]. The preprocessing was adapted from the [Matlab API](https://github.com/ashafaei/ubc3v) to be compatible with python and the libraries used in this project.
+
+As the data is loaded into memory to be fed to the FCN for training or testing, the labels are converted to categorical arrays and flattened. Each label is a 2D vector with 424*512 elements in the first dimension (one for each pixel) and 46 elements in the second where only a single element is 1 and the rest are 0s. The 46 elements represent the 46 possible classes.
+
 ### The FCN model
 ![Model architecture](/model.png?raw=true)
 ### Training (Loss and Evaluation Metrics)
@@ -48,14 +58,21 @@ The training process is really slow. One should expect training to take about 4 
 * Tensorflow
 * Keras
 
-## Improvements
-## Changes
+## Changes and Improvements
 ## Special structures or tricks
 ## Difficulties during development
-## Comparison with original approach
-## Experimental Results
+## Experimental Results and Comparison with Shotton et. al.
 Custom Loss Function: 0.173386267145078
 Custom Categorical Accuracy: 0.00949561961465289
+
+Label Data | Output of Proposed FCN | Example Shotton et. al. Output
+:---: | :---: | :---:
+![](/results/gt_pose1.png?raw=true) | ![](/results/nn_pose1.png?raw=true) | ![](/results/sh_pose1.png?raw=true)
+![](/results/gt_pose2.png?raw=true) | ![](/results/nn_pose2.png?raw=true) | ![](/results/sh_pose2.png?raw=true)
+![](/results/gt_pose3.png?raw=true) | ![](/results/nn_pose3.png?raw=true)
+
+
+
 ## Notes
 Training time
 
