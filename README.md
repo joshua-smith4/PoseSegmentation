@@ -54,7 +54,12 @@ The image below shows the proposed FCN architecture.
 
 ![Model architecture](/model.png?raw=true)
 
-The model accepts depth images with the dimensions batches x 424 x 512. The input is then passed to a reshape layer that converts the input into a tensor with the shape batches x 424 x 512 x 1 because convolutional layers in Keras expect a channels dimension. The output of reshape is sent to two locations. First it is sent through several convolutional layers with kernel sizes 3 x 3 and then to a max pooling layer that reduces the dimensionality to 212 x 256 x 32.
+The model accepts depth images with the dimensions batches x 424 x 512. The input is then passed to a reshape layer that converts the input into a tensor with the shape batches x 424 x 512 x 1 because convolutional layers in Keras expect a channels dimension. The output of the reshape step is then sent through several convolutional layers with kernel sizes 3 x 3 and then to a max pooling layer that reduces the dimensionality to 212 x 256 x 32. This is then sent to an upsampling function (Lambda) that performs an image resize bilinear operation to increase dimensionality to the original size with 32 channels. The output of the upsampling function and the original reshape are then combined through addition and sent to a convolution 2D transpose or "deconvolution layer". This increases the channels to 46 and then has a softmax activation on the channels axis. The output is then reshaped to match the needed dimensionality of the custom loss function.
+
+The convolution layers are for feature extraction as they are generally used. The upsampling lambda is necessary to revert to the original image size and the "deconvolution" layer is to maintain locality connectivity during upsampling. The addition layer is meant to help mitigate the resolution loss during upsampling by introducing the original input back into the feature space. This technique is inspired by ResNet.
+
+The output of the network is a tensor with dimensions batches x 217088 x 46. The pixel dimensions have been flattened into vectors of 46 elements where each value represents the probability of that pixel pertaining to the associated class.
+
 ### Training (Loss and Evaluation Metrics)
 ### Shortcomings
 ### External Packages
